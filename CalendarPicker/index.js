@@ -409,9 +409,9 @@ export default class CalendarPicker extends PureComponent {
     }, () => {
       const {currentView} = this.state;
       if (currentView === 'months' && this.props.onMonthSelect) {
-        this.props.onMonthSelect(moment({year, month}));
+        this.props.onMonthSelect(moment({year, month}).toDate());
       } else if (currentView === 'years' && this.props.onYearSelect) {
-        this.props.onYearSelect(moment({year, month}));
+        this.props.onYearSelect(moment({year, month}).toDate());
       }
     });
 
@@ -489,6 +489,10 @@ export default class CalendarPicker extends PureComponent {
       todayTextStyle,
       view,
       weekdays,
+      selectedMonthStyle,
+      selectedMonthTextStyle,
+      selectedYearStyle,
+      selectedYearTextStyle,
     } = this.props;
 
     let content;
@@ -507,6 +511,8 @@ export default class CalendarPicker extends PureComponent {
           maxDate={maxDate}
           onSelectMonth={this.handleOnSelectMonthYear}
           headingLevel={headingLevel}
+          selectedMonthStyle={selectedMonthStyle}
+          selectedMonthTextStyle={selectedMonthTextStyle}
         />
       );
       break;
@@ -530,6 +536,8 @@ export default class CalendarPicker extends PureComponent {
           nextTitleStyle={nextTitleStyle}
           onSelectYear={this.handleOnSelectMonthYear}
           headingLevel={headingLevel}
+          selectedYearStyle={selectedYearStyle}
+          selectedYearTextStyle={selectedYearTextStyle}
         />
       );
       break;
@@ -648,13 +656,15 @@ CalendarPicker.propTypes = {
   restrictMonthNavigation: PropTypes.bool,
   scaleFactor: PropTypes.number,
   selectedDayStyle: ViewPropType.style,
+  selectedMonthStyle: ViewPropType.style,
+  selectedMonthTextStyle: TextPropType.style,
   selectedRangeEndStyle: ViewPropType.style,
   selectedRangeEndTextStyle: TextPropType.style,
   selectedRangeStartStyle: ViewPropType.style,
   selectedRangeStartTextStyle: TextPropType.style,
   selectedRangeStyle: ViewPropType.style,
-  selectedMonthStyle: ViewPropType.style,
-  selectedMonthTextStyle: TextPropType.style,
+  selectedYearStyle: ViewPropType.style,
+  selectedYearTextStyle: TextPropType.style,
   selectMonthTitle: PropTypes.string,
   selectYearTitle: PropTypes.string,
   shouldControlViewViaProps: PropTypes.bool,

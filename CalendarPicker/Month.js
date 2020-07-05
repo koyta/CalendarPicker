@@ -2,7 +2,7 @@ import React, {memo, useCallback, useMemo} from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
 import PropTypes from 'prop-types';
 import {Utils} from './Utils';
-import {DatePropType, TextPropType} from './constants';
+import {DatePropType, TextPropType, ViewPropType} from './constants';
 
 function Month(props) {
   const {
@@ -15,6 +15,8 @@ function Month(props) {
     textStyle,
     minDate,
     maxDate,
+    selectedMonthStyle,
+    selectedMonthTextStyle,
   } = props;
 
   const monthName = useMemo(() => {
@@ -58,18 +60,18 @@ function Month(props) {
   const containerStyles = useMemo(() => {
     const result = [styles.monthContainer];
     if (isMonthSelected) {
-      result.push(styles.monthSelected);
+      result.push([styles.monthSelected, selectedMonthStyle]);
     }
     return result;
-  }, [isMonthSelected, styles.monthContainer, styles.monthSelected]);
+  }, [isMonthSelected, selectedMonthStyle, styles.monthContainer, styles.monthSelected]);
 
   const textStyles = useMemo(() => {
     const result = [styles.monthText, textStyle];
     if (isMonthSelected) {
-      result.push(styles.monthSelectedText);
+      result.push([styles.monthSelectedText, selectedMonthTextStyle]);
     }
     return result;
-  }, [isMonthSelected, styles.monthSelectedText, styles.monthText, textStyle]);
+  }, [isMonthSelected, selectedMonthTextStyle, styles.monthSelectedText, styles.monthText, textStyle]);
 
   return (
     <View style={containerStyles}>
@@ -101,6 +103,8 @@ Month.propTypes = {
   textStyle: TextPropType.style,
   minDate: DatePropType,
   maxDate: DatePropType,
+  selectedMonthStyle: ViewPropType.style,
+  selectedMonthTextStyle: TextPropType.style,
 };
 
 export default memo(Month);

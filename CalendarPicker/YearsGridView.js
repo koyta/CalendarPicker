@@ -2,7 +2,7 @@ import React, {memo} from 'react';
 import {View} from 'react-native';
 import PropTypes from 'prop-types';
 import Year from './Year';
-import {DatePropType, TextPropType} from './constants';
+import {DatePropType, TextPropType, ViewPropType} from './constants'
 
 const guideArray = [0, 1, 2, 3, 4];
 
@@ -15,6 +15,8 @@ function YearsGridView({
   textStyle,
   minDate,
   maxDate,
+  selectedYearStyle,
+  selectedYearTextStyle,
 }) {
   let year = initialYear - 13; // center current year in grid
 
@@ -32,6 +34,8 @@ function YearsGridView({
           minDate={minDate}
           maxDate={maxDate}
           textStyle={textStyle}
+          selectedYearStyle={selectedYearStyle}
+          selectedYearTextStyle={selectedYearTextStyle}
         />
       );
     });
@@ -58,6 +62,8 @@ YearsGridView.propTypes = {
   maxDate: DatePropType,
   minDate: DatePropType,
   textStyle: TextPropType.style,
+  selectedYearStyle: ViewPropType.style,
+  selectedYearTextStyle: TextPropType.style,
 };
 
 export default memo(YearsGridView);

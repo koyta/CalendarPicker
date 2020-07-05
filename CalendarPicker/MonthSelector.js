@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import {View} from 'react-native';
 import MonthsGridView from './MonthsGridView';
 import MonthsHeader from './MonthsHeader';
-import {DatePropType, TextPropType} from './constants';
+import {DatePropType, TextPropType, ViewPropType} from './constants'
 
 function MonthSelector(props) {
   const {
@@ -19,6 +19,8 @@ function MonthSelector(props) {
     minDate,
     maxDate,
     onSelectMonth,
+    selectedMonthStyle,
+    selectedMonthTextStyle,
   } = props;
 
   return (
@@ -38,6 +40,8 @@ function MonthSelector(props) {
         minDate={minDate}
         maxDate={maxDate}
         onSelectMonth={onSelectMonth}
+        selectedMonthStyle={selectedMonthStyle}
+        selectedMonthTextStyle={selectedMonthTextStyle}
       />
     </View>
   );
@@ -54,6 +58,8 @@ MonthSelector.propTypes = {
   minDate: DatePropType,
   maxDate: DatePropType,
   onSelectMonth: PropTypes.func,
+  selectedMonthStyle: ViewPropType.style,
+  selectedMonthTextStyle: TextPropType.style,
 };
 
 export default memo(MonthSelector);

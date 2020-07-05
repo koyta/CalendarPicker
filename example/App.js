@@ -206,16 +206,17 @@ export default class App extends Component {
             onDateChange={this.onDateChange}
             onMonthSelect={this.onMonthSelect}
             onYearSelect={this.onYearSelect}
-            selectedDayColor={'#0070f0'}
-            selectedDayTextColor={'#fff'}
+            selectedDayColor='#0070f0'
+            selectedDayTextColor='#fff'
             selectedEndDate={selectedEndDate}
             selectedRangeEndTextStyle={styles.selectedRangeEdgeTextStyle}
             selectedRangeStartTextStyle={styles.selectedRangeEdgeTextStyle}
             selectedStartDate={selectedStartDate}
             selectedToday={styles.selectedToday}
             selectedMonthStyle={styles.selectedMonthStyle}
-            selectMonthTitle={'Выберите месяц'}
-            selectYearTitle={'Выберите год'}
+            selectedMonthTextStyle={styles.selectedMonthTextStyle}
+            selectMonthTitle='Выберите месяц'
+            selectYearTitle='Выберите год'
           />
 
           <View style={styles.topSpacing}>

@@ -14,6 +14,8 @@ export default function MonthsGridView(props) {
     textStyle,
     minDate,
     maxDate,
+    selectedMonthStyle,
+    selectedMonthTextStyle,
   } = props;
   const _months = Array.from(Array(12).keys());
   const columnArray = [0, 1, 2];
@@ -34,6 +36,8 @@ export default function MonthsGridView(props) {
           minDate={minDate}
           maxDate={maxDate}
           textStyle={textStyle}
+          selectedMonthStyle={selectedMonthStyle}
+          selectedMonthTextStyle={selectedMonthTextStyle}
         />
       );
     });

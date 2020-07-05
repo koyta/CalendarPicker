@@ -14,6 +14,8 @@ function Year({
   textStyle,
   minDate,
   maxDate,
+  selectedYearStyle,
+  selectedYearTextStyle,
 }) {
   // Check whether year is outside of min/max range.
   const yearIsAfterMax = useMemo(() => {
@@ -45,12 +47,12 @@ function Year({
 
   const containerStyles = [styles.yearContainer];
   if (currentYear === year) {
-    containerStyles.push(styles.yearSelected);
+    containerStyles.push([styles.yearSelected, selectedYearStyle]);
   }
 
   const textStyles = [styles.yearText, textStyle];
   if (currentYear === year) {
-    textStyles.push(styles.yearSelectedText);
+    textStyles.push([styles.yearSelectedText, selectedYearTextStyle]);
   }
 
   return (
@@ -86,6 +88,8 @@ Year.propTypes = {
   textStyle: TextPropType.style,
   minDate: DatePropType,
   maxDate: DatePropType,
+  selectedYearStyle: ViewPropType.style,
+  selectedYearTextStyle: TextPropType.style,
 };
 
 export default memo(Year);
