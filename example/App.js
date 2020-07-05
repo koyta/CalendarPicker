@@ -1,68 +1,117 @@
 import React, { Component } from 'react';
 import {
+  Switch,
+  ScrollView,
   StyleSheet,
   Text,
   View,
   Button,
-  TextInput,
-  Switch,
 } from 'react-native';
 import moment from 'moment';
 import CalendarPicker from './CalendarPicker';
+import {Utils} from './CalendarPicker/Utils';
+
+const switchProps = {
+  trackColor: { false: '#767577', true: '#34c759' },
+};
 
 export default class App extends Component {
   constructor(props) {
     super(props);
 
-    let minDate = moment().subtract(15, 'day');
-    let day = minDate.clone();
-    let customDatesStyles = [];
-    for (let i = 0; i < 30; i++) {
-      customDatesStyles.push({
-        date: day.clone(),
-        // Random colors
-        style: {backgroundColor: '#'+('#00000'+(Math.random()*(64<<22)|32768).toString(16)).slice(-6)},
-        textStyle: {color: 'black'}, // sets the font color
-        containerStyle: [], // extra styling for day container
-      });
-      day.add(1, 'day');
-    }
-
-    let dayOfWeekStyles = {
-      5: {
-        color: '#00f',
-        fontWeight: 'bold',
-      }
-    };
-
     this.state = {
-      customDatesStyles,
-      dayOfWeekStyles,
-      enableRangeSelect: false,
-      minDate,
-      maxDate: moment().add(90, 'day'),
-      minRangeDuration: "1",
-      maxRangeDuration: "5",
       selectedStartDate: null,
+      selectedEndDate: null,
+      calendarType: 'day',
+      view: Utils.getViewFromType('day'),
+      shouldControlViewViaProps: false
     };
     this.onDateChange = this.onDateChange.bind(this);
     this.clear = this.clear.bind(this);
-    this.toggleEnableRange = this.toggleEnableRange.bind(this);
-    this.onMinRangeDuration = this.onMinRangeDuration.bind(this);
-    this.onMaxRangeDuration = this.onMaxRangeDuration.bind(this);
+    this.onMonthSelect = this.onMonthSelect.bind(this);
+    this.onYearSelect = this.onYearSelect.bind(this);
+    this.onCalendarTypeChange = this.onCalendarTypeChange.bind(this);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const {calendarType} = this.state;
+
+    let doStateUpdate = false;
+    let newState = {};
+
+    if (prevState.calendarType !== calendarType) {
+      newState.selectedStartDate = null;
+      newState.selectedEndDate = null;
+      newState.view = Utils.getViewFromType(calendarType);
+      newState.shouldControlViewViaProps = ['months', 'years'].includes(newState.view);
+
+      doStateUpdate = true;
+    }
+
+    if (doStateUpdate) {
+      this.setState({
+        ...newState
+      });
+    }
   }
 
   onDateChange(date, type) {
-    if (type === "START_DATE") {
+    const { calendarType } = this.state;
+
+    if (calendarType === 'day') {
       this.setState({
-        selectedStartDate: date,
+        selectedStartDate: date
       });
+      return;
     }
-    else {
+
+    if (calendarType === 'week') {
+      if (type === Utils.END_DATE) {
+        return;
+      }
+
       this.setState({
-        selectedEndDate: date,
+        selectedStartDate: moment(date).startOf('week'),
+        selectedEndDate: moment(date).endOf('week'),
       });
+
+      return;
     }
+
+    if (calendarType === 'range') {
+      if (type === 'START_DATE') {
+        this.setState({
+          selectedStartDate: date,
+        });
+      } else {
+        this.setState({
+          selectedEndDate: date,
+        });
+      }
+      return;
+    }
+
+    if (calendarType === 'month') {
+      // onMonthChange
+    }
+
+    if (calendarType === 'year') {
+      // onYearChange
+    }
+  }
+
+  onMonthSelect(date) {
+    this.setState({
+      selectedStartDate: moment(date).startOf('month'),
+      selectedEndDate: moment(date).endOf('month'),
+    });
+  }
+
+  onYearSelect(date) {
+    this.setState({
+      selectedStartDate: moment(date).startOf('year'),
+      selectedEndDate: moment(date).endOf('year'),
+    });
   }
 
   clear() {
@@ -72,106 +121,119 @@ export default class App extends Component {
     });
   }
 
-  toggleEnableRange(text) {
+  onCalendarTypeChange(type) {
     this.setState({
-      enableRangeSelect: !this.state.enableRangeSelect,
-      selectedStartDate: null,
-      selectedEndDate: null,
-    });
-  }
-
-  onMinRangeDuration(val) {
-    let parsedVal = parseInt(val);
-    this.setState({
-      minRangeDuration: val && !isNaN(parsedVal) ? parsedVal + "" : undefined,
-      selectedStartDate: null,
-      selectedEndDate: null,
-    });
-  }
-
-  onMaxRangeDuration(val) {
-    let parsedVal = parseInt(val);
-    this.setState({
-      maxRangeDuration: val && !isNaN(parsedVal) ? parsedVal + "" : undefined,
-      selectedStartDate: null,
-      selectedEndDate: null,
+      calendarType: type,
+      view: Utils.getViewFromType(type),
+      shouldControlViewViaProps: true,
     });
   }
 
   render() {
     const {
-      customDatesStyles,
-      dayOfWeekStyles,
-      enableRangeSelect,
-      minDate,
-      maxDate,
-      minRangeDuration,
-      maxRangeDuration,
       selectedStartDate,
       selectedEndDate,
+      calendarType,
+      view,
+      shouldControlViewViaProps,
     } = this.state;
-    const formattedStartDate = selectedStartDate ? selectedStartDate.format('YYYY-MM-DD') : '';
-    const formattedEndDate = selectedEndDate ? selectedEndDate.format('YYYY-MM-DD') : '';
+
+    const formattedStartDate = selectedStartDate
+      ? selectedStartDate.format('YYYY-MM-DD')
+      : '';
+    const formattedEndDate = selectedEndDate
+      ? selectedEndDate.format('YYYY-MM-DD')
+      : '';
+
+    const enableRangeSelect = ['week', 'range'].includes(calendarType);
 
     return (
-      <View style={styles.container}>
-        <CalendarPicker
-          selectedStartDate={selectedStartDate}
-          selectedEndDate={selectedEndDate}
-          onDateChange={this.onDateChange}
-          initialDate={minDate}
-          customDatesStyles={customDatesStyles}
-          dayOfWeekStyles={dayOfWeekStyles}
-          minDate={minDate}
-          maxDate={maxDate}
-          allowRangeSelection={enableRangeSelect}
-          allowBackwardRangeSelect={enableRangeSelect}
-          minRangeDuration={minRangeDuration && parseInt(minRangeDuration)}
-          maxRangeDuration={maxRangeDuration && parseInt(maxRangeDuration)}
-        />
-
-        <View style={styles.topSpacing}>
-          <Text style={styles.text}>Selected (Start) date:  { formattedStartDate }</Text>
-          { !!formattedEndDate &&
-            <Text style={styles.text}>Selected End date:  { formattedEndDate }</Text>
-          }
-        </View>
-
-        <View style={styles.topSpacing}>
-          <Button onPress={this.clear} title="Clear Selection"/>
-        </View>
-
-        <View style={styles.topSpacing}>
-          <Text style={styles.text}>Range select:</Text>
-        </View>
-        <Switch
-          trackColor={{ false: "#767577", true: "#81b0ff" }}
-          thumbColor={enableRangeSelect ? "#f5dd4b" : "#f4f3f4"}
-          ios_backgroundColor="#3e3e3e"
-          onValueChange={this.toggleEnableRange}
-          value={enableRangeSelect}
-        />
-
-        { enableRangeSelect &&
+      <ScrollView>
+        <View style={styles.container}>
           <View>
-            <Text style={styles.text}>minRangeDuration:</Text>
-            <TextInput
-              style={styles.textInput}
-              onChangeText={this.onMinRangeDuration}
-              value={minRangeDuration || ""}
-              keyboardType={"number-pad"}
-            />
-
-            <Text style={styles.text}>maxRangeDuration:</Text>
-            <TextInput
-              style={styles.textInput}
-              onChangeText={this.onMaxRangeDuration}
-              value={maxRangeDuration || ""}
-              keyboardType={"number-pad"}
-            />
+            <View style={{marginBottom: 20}}>
+              <Text style={{fontWeight: 'bold', fontSize: 18, display: 'flex'}}>Select</Text>
+              <Text style={{fontSize: 10}}>{JSON.stringify({calendarType,view,shouldControlViewViaProps})}</Text>
+              <View style={styles.switchers}>
+                <View>
+                  <Text>Range</Text>
+                  <Switch
+                    {...switchProps}
+                    onValueChange={() => this.onCalendarTypeChange('range')}
+                    value={calendarType === 'range'}
+                  />
+                </View>
+                <View>
+                  <Text>Day</Text>
+                  <Switch
+                    {...switchProps}
+                    onValueChange={() => this.onCalendarTypeChange('day')}
+                    value={calendarType === 'day'}
+                  />
+                </View>
+                <View>
+                  <Text>Week</Text>
+                  <Switch
+                    {...switchProps}
+                    onValueChange={() => this.onCalendarTypeChange('week')}
+                    value={calendarType === 'week'}
+                  />
+                </View>
+                <View>
+                  <Text>Month</Text>
+                  <Switch
+                    {...switchProps}
+                    onValueChange={() => this.onCalendarTypeChange('month')}
+                    value={calendarType === 'month'}
+                  />
+                </View>
+                <View>
+                  <Text>Year</Text>
+                  <Switch
+                    {...switchProps}
+                    onValueChange={() => this.onCalendarTypeChange('year')}
+                    value={calendarType === 'year'}
+                  />
+                </View>
+              </View>
+            </View>
           </View>
-        }
-      </View>
+          <CalendarPicker
+            allowBackwardRangeSelect={enableRangeSelect}
+            allowRangeSelection={enableRangeSelect}
+            shouldControlViewViaProps={shouldControlViewViaProps}
+            view={view}
+            onDateChange={this.onDateChange}
+            onMonthSelect={this.onMonthSelect}
+            onYearSelect={this.onYearSelect}
+            selectedDayColor={'#0070f0'}
+            selectedDayTextColor={'#fff'}
+            selectedEndDate={selectedEndDate}
+            selectedRangeEndTextStyle={styles.selectedRangeEdgeTextStyle}
+            selectedRangeStartTextStyle={styles.selectedRangeEdgeTextStyle}
+            selectedStartDate={selectedStartDate}
+            selectedToday={styles.selectedToday}
+            selectedMonthStyle={styles.selectedMonthStyle}
+            selectMonthTitle={'Выберите месяц'}
+            selectYearTitle={'Выберите год'}
+          />
+
+          <View style={styles.topSpacing}>
+            <Text style={styles.text}>
+              Selected Start date: {formattedStartDate}
+            </Text>
+            {!!formattedEndDate && (
+              <Text style={styles.text}>
+                Selected End date: {formattedEndDate}
+              </Text>
+            )}
+          </View>
+
+          <View style={styles.topSpacing}>
+            <Button onPress={this.clear} title="Clear Selection" />
+          </View>
+        </View>
+      </ScrollView>
     );
   }
 }
@@ -184,7 +246,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   topSpacing: {
-    marginTop:60
+    marginTop: 60,
   },
   text: {
     fontSize: 24,
@@ -194,5 +256,12 @@ const styles = StyleSheet.create({
     fontSize: 24,
     borderColor: 'gray',
     borderWidth: 1,
-  }
+  },
+  switchers: {
+    flexDirection: 'row'
+  },
+  selectedToday: {
+    backgroundColor: 'transparent'
+  },
+  selectedRangeEdgeTextStyle: { color: 'white' },
 });

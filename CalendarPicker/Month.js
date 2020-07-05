@@ -1,17 +1,15 @@
-import React from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity
-} from 'react-native';
+import React, {memo, useCallback, useMemo} from 'react';
+import {Text, TouchableOpacity, View} from 'react-native';
 import PropTypes from 'prop-types';
-import { Utils } from './Utils';
+import {Utils} from './Utils';
+import {DatePropType, TextPropType} from './constants';
 
-export default function Month(props) {
+function Month(props) {
   const {
     months,
-    currentMonth: month,
-    currentYear: year,
+    month,
+    currentMonth,
+    currentYear,
     styles,
     onSelectMonth,
     textStyle,
@@ -19,15 +17,17 @@ export default function Month(props) {
     maxDate,
   } = props;
 
-  const MONTHS = months || Utils.MONTHS; // English Month Array
-  const monthName = MONTHS[month];
+  const monthName = useMemo(() => {
+    const MONTHS = months || Utils.MONTHS;
+    return MONTHS[month];
+  }, [month, months]);
 
   let monthOutOfRange;
   let monthIsBeforeMin = false;
   let monthIsAfterMax = false;
   let monthIsDisabled = false;
 
-  // Check whether month is outside of min/max range.
+  // Check whether currentMonth is outside of min/max range.
   if (maxDate) {
     monthIsAfterMax = month > maxDate.month();
   }
@@ -39,29 +39,50 @@ export default function Month(props) {
 
   monthOutOfRange = monthIsAfterMax || monthIsBeforeMin || monthIsDisabled;
 
-  const onSelect = () => {
-    let _year = year;
-    if (minDate && (year < minDate.year())) {
+  const onSelect = useCallback(() => {
+    let _year = currentYear;
+    if (minDate && (currentYear < minDate.year())) {
       _year = minDate.year();
     }
-    if (maxDate && (year > maxDate.year())) {
+    if (maxDate && (currentYear > maxDate.year())) {
       _year = maxDate.year();
     }
     onSelectMonth({month, year: _year});
-  };
+  }, [currentYear, minDate, maxDate, onSelectMonth, month]);
+
+  const isMonthSelected = useMemo(() => {
+    return currentMonth === month;
+  },
+  [currentMonth, month]);
+
+  const containerStyles = useMemo(() => {
+    const result = [styles.monthContainer];
+    if (isMonthSelected) {
+      result.push(styles.monthSelected);
+    }
+    return result;
+  }, [isMonthSelected, styles.monthContainer, styles.monthSelected]);
+
+  const textStyles = useMemo(() => {
+    const result = [styles.monthText, textStyle];
+    if (isMonthSelected) {
+      result.push(styles.monthSelectedText);
+    }
+    return result;
+  }, [isMonthSelected, styles.monthSelectedText, styles.monthText, textStyle]);
 
   return (
-    <View style={[styles.monthContainer]}>
-      { !monthOutOfRange ?
+    <View style={containerStyles}>
+      {!monthOutOfRange ?
         <TouchableOpacity
           onPress={onSelect}>
-          <Text style={[styles.monthText, textStyle]}>
-            { monthName }
+          <Text style={textStyles}>
+            {monthName}
           </Text>
         </TouchableOpacity>
         :
         <Text style={[textStyle, styles.disabledText]}>
-          { monthName }
+          {monthName}
         </Text>
       }
     </View>
@@ -70,7 +91,16 @@ export default function Month(props) {
 
 Month.propTypes = {
   styles: PropTypes.shape({}),
+  // Month number
+  month: PropTypes.number,
+  // Selected month
   currentMonth: PropTypes.number,
   currentYear: PropTypes.number,
   onSelectMonth: PropTypes.func,
+  months: PropTypes.arrayOf(PropTypes.string),
+  textStyle: TextPropType.style,
+  minDate: DatePropType,
+  maxDate: DatePropType,
 };
+
+export default memo(Month);

@@ -22,12 +22,16 @@ export function makeStyles(params) {
     containerHeight,
     scaleFactor,
     selectedDayColor,
+    selectedStartBgColor,
+    selectedEndBgColor,
     selectedDayTextColor,
     todayBackgroundColor,
     dayShape
   } = params;
   const scaler = Math.min(containerWidth, containerHeight) / scaleFactor;
   const SELECTED_BG_COLOR = selectedDayColor ? selectedDayColor : DEFAULT_SELECTED_BACKGROUND_COLOR;
+  const SELECTED_START_BG_COLOR = selectedStartBgColor ? selectedStartBgColor : SELECTED_BG_COLOR;
+  const SELECTED_END_BG_COLOR = selectedEndBgColor ? selectedEndBgColor : SELECTED_BG_COLOR;
   const SELECTED_TEXT_COLOR = selectedDayTextColor ? selectedDayTextColor : DEFAULT_SELECTED_TEXT_COLOR;
   const TODAY_BG_COLOR = todayBackgroundColor ? todayBackgroundColor : DEFAULT_TODAY_BACKGROUND_COLOR;
 
@@ -113,7 +117,7 @@ export function makeStyles(params) {
       height: 30*scaler,
       borderTopLeftRadius: 20*scaler,
       borderBottomLeftRadius: 20*scaler,
-      backgroundColor: SELECTED_BG_COLOR,
+      backgroundColor: SELECTED_START_BG_COLOR,
       alignSelf: 'center',
       justifyContent: 'center'
     },
@@ -123,7 +127,7 @@ export function makeStyles(params) {
       height: 30*scaler,
       borderTopRightRadius: 20*scaler,
       borderBottomRightRadius: 20*scaler,
-      backgroundColor: SELECTED_BG_COLOR,
+      backgroundColor: SELECTED_END_BG_COLOR,
       alignSelf: 'center',
       justifyContent: 'center'
     },
@@ -173,7 +177,8 @@ export function makeStyles(params) {
     },
 
     weekRow: {
-      flexDirection: 'row'
+      flexDirection: 'row',
+      padding: 10*scaler,
     },
 
     disabledText: {
@@ -236,6 +241,24 @@ export function makeStyles(params) {
     yearContainer: {
       flex: 1,
       alignItems: 'center',
+    },
+
+    yearSelected: {
+      backgroundColor: SELECTED_BG_COLOR,
+      borderRadius: getBorderRadiusByShape(scaler, dayShape),
+    },
+
+    yearSelectedText: {
+      color: SELECTED_TEXT_COLOR,
+    },
+
+    monthSelected: {
+      backgroundColor: SELECTED_BG_COLOR,
+      borderRadius: getBorderRadiusByShape(scaler, dayShape),
+    },
+
+    monthSelectedText: {
+      color: SELECTED_TEXT_COLOR,
     },
 
     yearText: {

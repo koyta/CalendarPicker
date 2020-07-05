@@ -1,42 +1,36 @@
-import React from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity
-} from 'react-native';
+import React, {memo, useMemo, useCallback} from 'react';
+import {Text, View} from 'react-native';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 import PropTypes from 'prop-types';
 import moment from 'moment';
+import {DatePropType, TextPropType, ViewPropType} from './constants';
 
-export default function Year(props) {
-  const {
-    year,
-    currentMonth,
-    currentYear,
-    styles,
-    onSelectYear,
-    textStyle,
-    minDate,
-    maxDate,
-  } = props;
-
-  let yearOutOfRange;
-  let yearIsBeforeMin = false;
-  let yearIsAfterMax = false;
-  let yearIsDisabled = false;
-
+function Year({
+  year,
+  currentMonth,
+  currentYear,
+  styles,
+  onSelectYear,
+  textStyle,
+  minDate,
+  maxDate,
+}) {
   // Check whether year is outside of min/max range.
-  if (maxDate) {
-    yearIsAfterMax = year > maxDate.year();
-  }
-  if (minDate) {
-    yearIsBeforeMin = year < minDate.year();
-  }
+  const yearIsAfterMax = useMemo(() => {
+    return maxDate && year > maxDate.year();
+  }, [maxDate, year]);
+  const yearIsBeforeMin = useMemo(() => {
+    return minDate && year < minDate.year();
+  }, [minDate, year]);
+  const yearIsDisabled = useMemo(() => false, []);
 
-  // ToDo: disabledYears props to disable years separate from disabledDates
+  // TODO: disabledYears props to disable years separate from disabledDates
+  const yearOutOfRange = useMemo(
+    () => yearIsAfterMax || yearIsBeforeMin || yearIsDisabled,
+    [yearIsAfterMax, yearIsBeforeMin, yearIsDisabled]
+  );
 
-  yearOutOfRange = yearIsAfterMax || yearIsBeforeMin || yearIsDisabled;
-
-  const onSelect = () => {
+  const onSelect = useCallback(() => {
     // Guard against navigating to months beyond min/max dates.
     let month = currentMonth;
     let currentMonthYear = moment({year: currentYear, month});
@@ -47,28 +41,51 @@ export default function Year(props) {
       month = minDate.month();
     }
     onSelectYear({month, year});
-  };
+  }, [currentMonth, currentYear, maxDate, minDate, onSelectYear, year]);
+
+  const containerStyles = [styles.yearContainer];
+  if (currentYear === year) {
+    containerStyles.push(styles.yearSelected);
+  }
+
+  const textStyles = [styles.yearText, textStyle];
+  if (currentYear === year) {
+    textStyles.push(styles.yearSelectedText);
+  }
 
   return (
-    <View style={[styles.yearContainer]}>
-      { !yearOutOfRange ?
-        <TouchableOpacity
-          onPress={onSelect}>
-          <Text style={[styles.yearText, textStyle]}>
-            { year }
+    <View style={containerStyles}>
+      {!yearOutOfRange
+        ? (
+          <TouchableOpacity onPress={onSelect}>
+            <Text style={textStyles}>
+              {year}
+            </Text>
+          </TouchableOpacity>
+        )
+        : (
+          <Text style={[textStyle, styles.disabledText]}>
+            {year}
           </Text>
-        </TouchableOpacity>
-        :
-        <Text style={[textStyle, styles.disabledText]}>
-          { year }
-        </Text>
+        )
       }
     </View>
   );
 }
 
 Year.propTypes = {
-  styles: PropTypes.shape({}),
+  styles: PropTypes.shape({
+    yearContainer: ViewPropType.style,
+    yearText: TextPropType.style,
+    disabledText: TextPropType.style,
+  }),
   year: PropTypes.number,
   onSelectYear: PropTypes.func,
+  currentMonth: PropTypes.number.isRequired,
+  currentYear: PropTypes.number.isRequired,
+  textStyle: TextPropType.style,
+  minDate: DatePropType,
+  maxDate: DatePropType,
 };
+
+export default memo(Year);

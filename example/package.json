@@ -2,7 +2,7 @@
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
-    "cp": "cpx \"../CalendarPicker/**\" CalendarPicker -u",
+    "cp": "cpx \"../CalendarPicker/**\" CalendarPicker -u -w",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
@@ -19,7 +19,7 @@
     "react-dom": "~16.9.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-36.0.0.tar.gz",
     "react-native-web": "~0.11.7",
-    "react-native-calendar-picker": "file:../"
+    "react-native-calendar-picker": "file:../../CalendarPicker"
   },
   "devDependencies": {
     "@deboxsoft/cpx": "^1.5.0",

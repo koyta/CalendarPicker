@@ -2,8 +2,8 @@ import React from 'react';
 import {
   View,
   Text,
-  TouchableOpacity
 } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 
@@ -20,6 +20,8 @@ export default function Day(props) {
     allowRangeSelection,
     allowBackwardRangeSelect,
     selectedDayStyle,
+    selectedRangeStartTextStyle,
+    selectedRangeEndTextStyle,
     selectedRangeStartStyle,
     selectedRangeStyle,
     selectedRangeEndStyle,
@@ -143,12 +145,12 @@ export default function Day(props) {
         // Apply style for start date
         if (isThisDaySameAsSelectedStart) {
           daySelectedStyle = [styles.startDayWrapper, selectedRangeStyle, selectedRangeStartStyle];
-          selectedDayColorStyle = styles.selectedDayLabel;
+          selectedDayColorStyle = selectedRangeStartTextStyle || styles.selectedDayLabel;
         }
         // Apply style for end date
         if (isThisDaySameAsSelectedEnd) {
           daySelectedStyle = [styles.endDayWrapper, selectedRangeStyle, selectedRangeEndStyle];
-          selectedDayColorStyle = styles.selectedDayLabel;
+          selectedDayColorStyle = selectedRangeEndTextStyle || styles.selectedDayLabel;
         }
         // Apply style if start date is the same as end date
         if (isThisDaySameAsSelectedEnd &&

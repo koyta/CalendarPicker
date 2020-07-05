@@ -1,7 +1,8 @@
-import React, { Component } from 'react';
-import { View, Dimensions } from 'react-native';
-import { makeStyles } from './makeStyles';
-import { Utils } from './Utils';
+import React, {PureComponent} from 'react';
+import {Dimensions, View} from 'react-native';
+import PropTypes from 'prop-types';
+import {makeStyles} from './makeStyles';
+import {Utils} from './Utils';
 import HeaderControls from './HeaderControls';
 import Weekdays from './Weekdays';
 import DaysGridView from './DaysGridView';
@@ -9,6 +10,7 @@ import MonthSelector from './MonthSelector';
 import YearSelector from './YearSelector';
 import Swiper from './Swiper';
 import moment from 'moment';
+import {DatePropType, TextPropType, ViewPropType} from './constants';
 
 const SWIPE_LEFT = 'SWIPE_LEFT';
 const SWIPE_RIGHT = 'SWIPE_RIGHT';
@@ -18,13 +20,33 @@ const _swipeConfig = {
   directionalOffsetThreshold: 80
 };
 
-export default class CalendarPicker extends Component {
+export default class CalendarPicker extends PureComponent {
+  static defaultProps = {
+    enableSwipe: true,
+    initialDate: moment(),
+    scaleFactor: 375,
+    onDateChange: () => {
+      console.log('onDateChange() not provided');
+    },
+    customDatesStyles: [],
+    customDatesStylesPriority: 'dayOfWeek',
+    dayOfWeekStyles: {},
+    enableDateChange: true,
+    headingLevel: 1,
+    nextTitle: 'Next',
+    previousTitle: 'Previous',
+    selectMonthTitle: 'Select Month',
+    selectYearTitle: 'Select Year',
+    shouldControlViewViaProps: false,
+    sundayColor: '#FFFFFF',
+  }
+
   constructor(props) {
     super(props);
     this.state = {
       currentMonth: null,
       currentYear: null,
-      currentView: 'days',
+      currentView: props.shouldControlViewViaProps ? props.view : 'days',
       selectedStartDate: props.selectedStartDate && moment(props.selectedStartDate),
       selectedEndDate: props.selectedEndDate && moment(props.selectedEndDate),
       minDate: props.minDate && moment(props.minDate),
@@ -49,29 +71,17 @@ export default class CalendarPicker extends Component {
     this.handleOnSelectMonthYear = this.handleOnSelectMonthYear.bind(this);
     this.onSwipe = this.onSwipe.bind(this);
     this.resetSelections = this.resetSelections.bind(this);
+    this.tryChangeCurrentView = this.tryChangeCurrentView.bind(this);
   }
 
-  static defaultProps = {
-    initialDate: moment(),
-    scaleFactor: 375,
-    enableSwipe: true,
-    onDateChange: () => {
-      console.log('onDateChange() not provided');
-    },
-    enableDateChange: true,
-    headingLevel: 1,
-    sundayColor: '#FFFFFF',
-    dayOfWeekStyles: {},
-    customDatesStyles: [],
-    customDatesStylesPriority: 'dayOfWeek',
-    previousTitle: 'Previous',
-    nextTitle: 'Next',
-    selectMonthTitle: 'Select Month',
-    selectYearTitle: 'Select Year',
-  };
-
-  componentDidMount() {
+  static getDerivedStateFromProps(props, state) {
+    if (props.shouldControlViewViaProps) {
+      state.currentView = props.view;
+    }
+    return state;
   }
+
+  componentDidMount() {}
 
   componentDidUpdate(prevProps) {
     let doStateUpdate = false;
@@ -151,7 +161,7 @@ export default class CalendarPicker extends Component {
       dayShape
     } = props;
 
-    // The styles in makeStyles are intially scaled to this width
+    // The styles in makeStyles are initially scaled to this width
     const containerWidth = width ? width : Dimensions.get('window').width;
     const containerHeight = height ? height : Dimensions.get('window').height;
     return {
@@ -369,14 +379,26 @@ export default class CalendarPicker extends Component {
   }
 
   handleOnPressYear() {
-    this.setState({
-      currentView: 'years'
-    });
+    this.props.onYearControlPress && this.props.onYearControlPress();
+    this.tryChangeCurrentView('years');
   }
 
   handleOnPressMonth() {
+    this.props.onMonthControlPress && this.props.onMonthControlPress();
+    this.tryChangeCurrentView('months');
+  }
+
+  /**
+   * If you want to use internal mechanism for open days/months/years views,
+   * than {shouldControlViewViaProps} must be set to false
+   * */
+  tryChangeCurrentView(currentView) {
+    if (this.props.shouldControlViewViaProps) {
+      return;
+    }
+
     this.setState({
-      currentView: 'months'
+      currentView
     });
   }
 
@@ -384,8 +406,16 @@ export default class CalendarPicker extends Component {
     this.setState({
       currentYear: year,
       currentMonth: month,
-      currentView: 'days'
+    }, () => {
+      const {currentView} = this.state;
+      if (currentView === 'months' && this.props.onMonthSelect) {
+        this.props.onMonthSelect(moment({year, month}));
+      } else if (currentView === 'years' && this.props.onYearSelect) {
+        this.props.onYearSelect(moment({year, month}));
+      }
     });
+
+    this.tryChangeCurrentView('days');
   }
 
   onSwipe(gestureName) {
@@ -426,39 +456,44 @@ export default class CalendarPicker extends Component {
     } = this.state;
 
     const {
-      allowRangeSelection,
       allowBackwardRangeSelect,
-      startFromMonday,
-      initialDate,
-      weekdays,
-      months,
-      previousComponent,
-      nextComponent,
-      previousTitle,
-      nextTitle,
-      previousTitleStyle,
-      nextTitleStyle,
-      textStyle,
-      todayTextStyle,
-      selectedDayStyle,
-      selectedRangeStartStyle,
-      selectedRangeStyle,
-      selectedRangeEndStyle,
-      disabledDatesTextStyle,
-      swipeConfig,
-      enableDateChange,
-      restrictMonthNavigation,
-      headingLevel,
+      allowRangeSelection,
       dayLabelsWrapper,
       dayOfWeekStyles,
+      disabledDatesTextStyle,
+      enableDateChange,
+      headingLevel,
+      initialDate,
+      months,
+      monthYearHeaderWrapperStyle,
+      nextComponent,
+      nextTitle,
+      nextTitleStyle,
+      previousComponent,
+      previousTitle,
+      previousTitleStyle,
+      restrictMonthNavigation,
+      selectedDayStyle,
+      selectedRangeEndStyle,
+      selectedRangeEndTextStyle,
+      selectedRangeStartStyle,
+      selectedRangeStartTextStyle,
+      selectedRangeStyle,
       selectMonthTitle,
       selectYearTitle,
+      shouldControlViewViaProps,
       showDayStragglers,
-      monthYearHeaderWrapperStyle,
+      startFromMonday,
+      swipeConfig,
+      textStyle,
+      todayTextStyle,
+      view,
+      weekdays,
     } = this.props;
 
     let content;
-    switch (this.state.currentView) {
+    const currentView = shouldControlViewViaProps ? view : this.state.currentView;
+    switch (currentView) {
     case 'months':
       content = (
         <MonthSelector
@@ -466,6 +501,7 @@ export default class CalendarPicker extends Component {
           textStyle={textStyle}
           title={selectMonthTitle}
           currentYear={currentYear}
+          currentMonth={currentMonth}
           months={months}
           minDate={minDate}
           maxDate={maxDate}
@@ -555,6 +591,8 @@ export default class CalendarPicker extends Component {
             selectedRangeStartStyle={selectedRangeStartStyle}
             selectedRangeStyle={selectedRangeStyle}
             selectedRangeEndStyle={selectedRangeEndStyle}
+            selectedRangeStartTextStyle={selectedRangeStartTextStyle}
+            selectedRangeEndTextStyle={selectedRangeEndTextStyle}
             customDatesStyles={customDatesStyles}
           />
         </View>
@@ -573,3 +611,59 @@ export default class CalendarPicker extends Component {
     );
   }
 }
+
+CalendarPicker.propTypes = {
+  allowBackwardRangeSelect: PropTypes.bool,
+  allowRangeSelection: PropTypes.bool,
+  view: PropTypes.oneOf(['days', 'months', 'years']),
+  customDatesStyles: PropTypes.array,
+  customDatesStylesPriority: PropTypes.string,
+  dayLabelsWrapper: ViewPropType.style,
+  dayOfWeekStyles: ViewPropType.style,
+  disabledDates: PropTypes.arrayOf(DatePropType),
+  disabledDatesTextStyle: TextPropType.style,
+  enableDateChange: PropTypes.bool,
+  enableSwipe: PropTypes.bool,
+  headingLevel: PropTypes.number,
+  height: PropTypes.number,
+  initialDate: DatePropType,
+  maxDate: DatePropType,
+  maxRangeDuration: DatePropType,
+  minDate: DatePropType,
+  minRangeDuration: DatePropType,
+  months: PropTypes.arrayOf(PropTypes.string),
+  monthYearHeaderWrapperStyle: ViewPropType.style,
+  nextComponent: PropTypes.element,
+  nextTitle: PropTypes.string,
+  nextTitleStyle: TextPropType.style,
+  onDateChange: PropTypes.func.isRequired,
+  onMonthChange: PropTypes.func,
+  onMonthControlPress: PropTypes.func,
+  onMonthSelect: PropTypes.func,
+  onSwipe: PropTypes.func,
+  onYearControlPress: PropTypes.func,
+  previousComponent: PropTypes.element,
+  previousTitle: PropTypes.string,
+  previousTitleStyle: TextPropType.style,
+  restrictMonthNavigation: PropTypes.bool,
+  scaleFactor: PropTypes.number,
+  selectedDayStyle: ViewPropType.style,
+  selectedRangeEndStyle: ViewPropType.style,
+  selectedRangeEndTextStyle: TextPropType.style,
+  selectedRangeStartStyle: ViewPropType.style,
+  selectedRangeStartTextStyle: TextPropType.style,
+  selectedRangeStyle: ViewPropType.style,
+  selectedMonthStyle: ViewPropType.style,
+  selectedMonthTextStyle: TextPropType.style,
+  selectMonthTitle: PropTypes.string,
+  selectYearTitle: PropTypes.string,
+  shouldControlViewViaProps: PropTypes.bool,
+  showDayStragglers: PropTypes.bool,
+  startFromMonday: PropTypes.bool,
+  sundayColor: PropTypes.string,
+  swipeConfig: PropTypes.shape({}),
+  textStyle: TextPropType.style,
+  todayTextStyle: TextPropType.style,
+  weekdays: PropTypes.arrayOf(PropTypes.string),
+  width: PropTypes.number,
+};

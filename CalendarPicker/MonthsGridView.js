@@ -1,11 +1,12 @@
 import React from 'react';
-import { View } from 'react-native';
+import {View} from 'react-native';
 import PropTypes from 'prop-types';
 import Month from './Month';
-
+import {TextPropType, ViewPropType} from './constants';
 
 export default function MonthsGridView(props) {
   const {
+    currentMonth,
     currentYear,
     months,
     styles,
@@ -15,16 +16,17 @@ export default function MonthsGridView(props) {
     maxDate,
   } = props;
   const _months = Array.from(Array(12).keys());
-  const columnArray = [ 0, 1, 2 ];
-  const rowArray = [ 0, 1, 2, 3 ];
+  const columnArray = [0, 1, 2];
+  const rowArray = [0, 1, 2, 3];
 
   function generateColumns() {
-    const column = columnArray.map(index => {
-      const currentMonth = _months.shift();
+    return columnArray.map(index => {
+      const month = _months.shift();
       return (
         <Month
-          key={currentMonth + index}
+          key={month + index}
           currentMonth={currentMonth}
+          month={month}
           currentYear={currentYear}
           months={months}
           styles={styles}
@@ -35,14 +37,13 @@ export default function MonthsGridView(props) {
         />
       );
     });
-    return column;
   }
 
   return (
     <View style={styles.monthsWrapper}>
-      { rowArray.map(index => (
+      {rowArray.map(index => (
         <View key={index} style={styles.monthsRow}>
-          { generateColumns() }
+          {generateColumns()}
         </View>
       ))
       }
@@ -51,8 +52,11 @@ export default function MonthsGridView(props) {
 }
 
 MonthsGridView.propTypes = {
-  styles: PropTypes.shape(),
-  currentYear: PropTypes.number.isRequired,
+  styles: PropTypes.shape({}),
+  selectedMonth: PropTypes.number,
+  currentYear: PropTypes.number,
   months: PropTypes.array,
   onSelectMonth: PropTypes.func,
+  selectedMonthStyle: ViewPropType.style,
+  selectedMonthTextStyle: TextPropType.style,
 };

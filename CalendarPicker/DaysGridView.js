@@ -1,17 +1,12 @@
 import React from 'react';
 import uuid from 'uuid/v4';
-import {
-  View,
-  Text,
-  ViewPropTypes as RNViewPropTypes,
-} from 'react-native';
+import {View} from 'react-native';
 import PropTypes from 'prop-types';
 import Day from './Day';
 import EmptyDay from './EmptyDay';
-import { Utils } from './Utils';
+import {Utils} from './Utils';
 import moment from 'moment';
-
-const ViewPropTypes = RNViewPropTypes || View.propTypes;
+import {DatePropType, TextPropType, ViewPropType} from './constants';
 
 export default function DaysGridView(props) {
   const {
@@ -30,6 +25,8 @@ export default function DaysGridView(props) {
     selectedRangeStartStyle,
     selectedRangeStyle,
     selectedRangeEndStyle,
+    selectedRangeStartTextStyle,
+    selectedRangeEndTextStyle,
     customDatesStyles,
     minDate,
     maxDate,
@@ -105,6 +102,8 @@ export default function DaysGridView(props) {
         selectedRangeStartStyle={selectedRangeStartStyle}
         selectedRangeStyle={selectedRangeStyle}
         selectedRangeEndStyle={selectedRangeEndStyle}
+        selectedRangeStartTextStyle={selectedRangeStartTextStyle}
+        selectedRangeEndTextStyle={selectedRangeEndTextStyle}
         customDatesStyles={customDatesStyles}
         enableDateChange={enableDateChange}
       />
@@ -178,28 +177,26 @@ export default function DaysGridView(props) {
 }
 
 DaysGridView.propTypes = {
-  styles: PropTypes.shape(),
+  styles: PropTypes.shape({}),
   month: PropTypes.number.isRequired,
   year: PropTypes.number.isRequired,
   onPressDay: PropTypes.func,
   startFromMonday: PropTypes.bool,
-  selectedDayStyle: ViewPropTypes.style,
-  selectedRangeStartStyle: ViewPropTypes.style,
-  selectedRangeStyle: ViewPropTypes.style,
-  selectedRangeEndStyle: ViewPropTypes.style,
-  todayTextStyle: Text.propTypes.style,
+  selectedDayStyle: ViewPropType.style,
+  selectedRangeStartStyle: ViewPropType.style,
+  selectedRangeStyle: ViewPropType.style,
+  selectedRangeEndStyle: ViewPropType.style,
+  selectedRangeStartTextStyle: TextPropType.style,
+  selectedRangeEndTextStyle: TextPropType.style,
+  todayTextStyle: TextPropType.style,
   customDatesStyles: PropTypes.arrayOf(PropTypes.shape({
-    date: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.instanceOf(Date),
-      PropTypes.instanceOf(moment)
-    ]),
-    containerStyle: ViewPropTypes.style,
-    style: ViewPropTypes.style,
-    textStyle: Text.propTypes.style,
+    date: DatePropType,
+    containerStyle: ViewPropType.style,
+    style: ViewPropType.style,
+    textStyle: TextPropType.style,
   })),
   disabledDates: PropTypes.oneOfType([PropTypes.array, PropTypes.func]),
-  disabledDatesTextStyle: Text.propTypes.style,
+  disabledDatesTextStyle: TextPropType.style,
   minRangeDuration: PropTypes.oneOfType([PropTypes.array, PropTypes.number]),
   maxRangeDuration: PropTypes.oneOfType([PropTypes.array, PropTypes.number]),
 };

@@ -26,4 +26,14 @@ export const Utils = {
     }
     return false;
   },
+  getViewFromType: function(type) {
+    const obj = {
+      day: 'days',
+      range: 'days',
+      week: 'days',
+      month: 'months',
+      year: 'years',
+    };
+    return obj[type];
+  }
 };

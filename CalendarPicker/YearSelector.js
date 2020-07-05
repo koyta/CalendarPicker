@@ -68,7 +68,7 @@ export default class YearSelector extends Component {
           onYearViewNext={this.handleOnYearViewNext}
         />
         <YearsGridView
-          intialYear={this.state.initialYear}
+          initialYear={this.state.initialYear}
           currentMonth={currentMonth}
           currentYear={currentYear}
           styles={styles}

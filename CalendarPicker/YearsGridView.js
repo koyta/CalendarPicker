@@ -1,25 +1,25 @@
-import React from 'react';
-import { View } from 'react-native';
+import React, {memo} from 'react';
+import {View} from 'react-native';
 import PropTypes from 'prop-types';
 import Year from './Year';
+import {DatePropType, TextPropType} from './constants';
 
+const guideArray = [0, 1, 2, 3, 4];
 
-export default function YearsGridView(props) {
-  const {
-    intialYear,
-    currentMonth,
-    currentYear,
-    styles,
-    onSelectYear,
-    textStyle,
-    minDate,
-    maxDate,
-  } = props;
-  const guideArray = [ 0, 1, 2, 3, 4 ];
-  let year = intialYear - 13; // center current year in grid
+function YearsGridView({
+  initialYear,
+  currentMonth,
+  currentYear,
+  styles,
+  onSelectYear,
+  textStyle,
+  minDate,
+  maxDate,
+}) {
+  let year = initialYear - 13; // center current year in grid
 
-  function generateColumns() {
-    const column = guideArray.map(() => {
+  const generateColumns = () => {
+    return guideArray.map(() => {
       year++;
       return (
         <Year
@@ -35,13 +35,13 @@ export default function YearsGridView(props) {
         />
       );
     });
-    return column;
-  }
+  };
+
   return (
     <View style={styles.yearsWrapper}>
-      { guideArray.map(index => (
+      {guideArray.map(index => (
         <View key={year} style={styles.yearsRow}>
-          { generateColumns(index) }
+          {generateColumns(index)}
         </View>
       ))
       }
@@ -50,7 +50,14 @@ export default function YearsGridView(props) {
 }
 
 YearsGridView.propTypes = {
-  styles: PropTypes.shape(),
-  intialYear: PropTypes.number.isRequired,
+  styles: PropTypes.shape({}),
+  initialYear: PropTypes.number.isRequired,
   onSelectYear: PropTypes.func,
+  currentMonth: PropTypes.number.isRequired,
+  currentYear: PropTypes.number.isRequired,
+  maxDate: DatePropType,
+  minDate: DatePropType,
+  textStyle: TextPropType.style,
 };
+
+export default memo(YearsGridView);
