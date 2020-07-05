@@ -267,9 +267,4 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent'
   },
   selectedRangeEdgeTextStyle: { color: 'white' },
-  selectedMonthStyle: {
-    paddingVertical: 5,
-    marginTop: -5,
-    marginBottom: -5
-  }
 });

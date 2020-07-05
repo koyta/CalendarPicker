@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import {
   View,
   Text,
@@ -35,6 +35,10 @@ export default function Day(props) {
     maxRangeDuration,
     enableDateChange
   } = props;
+
+  const handleDayPress = useCallback(() => {
+    onPressDay(day);
+  }, [day, onPressDay]);
 
   const thisDay = moment({year, month, day, hour: 12 });
   const today = moment();
@@ -179,7 +183,7 @@ export default function Day(props) {
         <TouchableOpacity
           disabled={!enableDateChange}
           style={[customDateStyle, daySelectedStyle, propSelectedDayStyle ]}
-          onPress={() => onPressDay(day) }>
+          onPress={handleDayPress}>
           <Text style={[styles.dayLabel, textStyle, customTextStyle, selectedDayColorStyle]}>
             { day }
           </Text>

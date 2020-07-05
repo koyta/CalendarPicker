@@ -42,8 +42,8 @@ export function makeStyles(params) {
     },
 
     dayButton: {
-      width: 30*scaler,
-      height: 30*scaler,
+      width: 40*scaler,
+      height: 40*scaler,
       borderRadius: getBorderRadiusByShape(scaler, dayShape),
       alignSelf: 'center',
       justifyContent: 'center'
@@ -107,8 +107,8 @@ export function makeStyles(params) {
     dayWrapper: {
       alignItems: 'center',
       justifyContent: 'center',
-      width: 50*scaler,
-      height: 40*scaler,
+      width: (50*scaler % 2) === 0 ? 50*scaler : 50*scaler - 1,
+      height: 50*scaler,
       backgroundColor: 'rgba(0,0,0,0.0)'
     },
 
@@ -178,7 +178,6 @@ export function makeStyles(params) {
 
     weekRow: {
       flexDirection: 'row',
-      padding: 10*scaler,
     },
 
     disabledText: {
@@ -211,8 +210,10 @@ export function makeStyles(params) {
     },
 
     monthContainer: {
+      paddingVertical: 10,
       flex: 1,
       alignItems: 'center',
+      justifyContent: 'center',
     },
 
     monthText: {
@@ -229,7 +230,7 @@ export function makeStyles(params) {
 
     monthsRow: {
       flexDirection: 'row',
-      padding: 20*scaler,
+      padding: 10*scaler,
     },
 
     yearHeaderMainText: {
