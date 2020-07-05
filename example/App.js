@@ -213,7 +213,9 @@ export default class App extends Component {
             selectedRangeStartTextStyle={styles.selectedRangeEdgeTextStyle}
             selectedStartDate={selectedStartDate}
             selectedToday={styles.selectedToday}
+            selectedYearStyle={styles.selectedYearStyle}
             selectedMonthStyle={styles.selectedMonthStyle}
+            selectedYearTextStyle={styles.selectedYearTextStyle}
             selectedMonthTextStyle={styles.selectedMonthTextStyle}
             selectMonthTitle='Выберите месяц'
             selectYearTitle='Выберите год'
@@ -265,4 +267,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent'
   },
   selectedRangeEdgeTextStyle: { color: 'white' },
+  selectedMonthStyle: {
+    paddingVertical: 5,
+    marginTop: -5,
+    marginBottom: -5
+  }
 });
