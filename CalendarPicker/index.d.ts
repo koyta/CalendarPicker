@@ -4,7 +4,7 @@ import * as React from 'react';
 import { StyleProp, TextStyle, ViewStyle } from 'react-native';
 import { Moment, MomentInput } from 'moment';
 
-export default class CalendarPicker extends React.Component<CalendarPickerProps> {
+export default class CalendarPicker extends React.PureComponent<CalendarPickerProps> {
   handleOnPressDay(day: number): void;
   handleOnPressNext(): void;
   handleOnPressPrevious(): void;
