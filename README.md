@@ -82,6 +82,8 @@ const styles = StyleSheet.create({
 | **`showDayStragglers`** | `Boolean` | Optional. Populate previous & next month days in empty slots. Default is `false` |
 | **`allowRangeSelection`** | `Boolean` | Optional. Allow to select date ranges. Default is `false` |
 | **`allowBackwardRangeSelect`** | `Boolean` | Optional. Allow selecting range in reverse. Default is `false` |
+| **`shouldControlViewViaProps`** | `Boolean` | Optional. Trigger to enable or disable controlling calendar view with `view` property.
+| **`view`** | `String` | Optional. Specifies current calendar view. One of `days`, `months` or `years`. Set to true `shouldControlViewViaProps` to say calendar use this value.
 | **`previousTitle`** | `String` | Optional. Title of button for previous month. Default is `Previous` |
 | **`nextTitle`** | `String` | Optional. Title of button for next month. Default is `Next` |
 | **`previousTitleStyle`** | `TextStyle` | Optional. Text styling for Previous text.|
@@ -94,6 +96,12 @@ const styles = StyleSheet.create({
 | **`selectedRangeStartStyle`** | `ViewStyle` | Optional. Style for range selected start day. |
 | **`selectedRangeEndStyle`** | `ViewStyle` | Optional. Style for range selected end day. |
 | **`selectedRangeStyle`** | `ViewStyle` | Optional. Style for all days in range selection. |
+| **`selectedMonthStyle`** | `ViewStyle` | Optional. : ViewPropType.style,
+| **`selectedMonthTextStyle`** | `TextStyle` | Optional. : TextPropType.style,
+| **`selectedRangeEndTextStyle`** | `TextStyle` | Optional. : TextPropType.style,
+| **`selectedRangeStartTextStyle`** | `TextStyle` | Optional. : TextPropType.style,
+| **`selectedYearStyle`** | `ViewStyle` | Optional. : ViewPropType.style,
+| **`selectedYearTextStyle`** | `TextStyle` | Optional. : TextPropType.style,
 | **`disabledDates`** | `Array` or `Function` | Optional. Specifies dates that cannot be selected. Array of Dates, or a function that returns true for a given Moment date (apologies for the inverted logic). |
 | **`disabledDatesTextStyle`** | `TextStyle` | Optional. Text styling for disabled dates. |
 | **`selectedStartDate`** | `Date` | Optional. Specifies a selected Start Date. |
@@ -117,6 +125,10 @@ const styles = StyleSheet.create({
 | **`restrictMonthNavigation`** | `Boolean` | Optional. Whether to disable Previous month button if it is before minDate or Next month button if it is after MaxDate. Default is `false` |
 | **`onDateChange`** | `Function` | Optional. Callback when a date is selected. Returns Moment `date` as first param; `START_DATE` or `END_DATE` as second param.|
 | **`onMonthChange`** | `Function` | Optional. Callback when Previous / Next month is pressed. Returns Moment `date` as first parameter.|
+| **`onMonthChange`** | `Function` | Optional. : PropTypes.func,
+| **`onMonthControlPress`** | `Function` | Optional. : PropTypes.func,
+| **`onMonthSelect`** | `Function` | Optional. : PropTypes.func,
+| **`onYearControlPress`** | `Function` | Optional. : PropTypes.func,
 | **`onSwipe`** | `Function` | Optional. Callback when swipe event is triggered. Returns swipe direction as first parameter.|
 | **`dayShape`** | `String` | Optional. Shape of the Day component. Default is `circle`. Available options are `circle` and `square`.|
 | **`headingLevel`** | `Number` | Optional. Sets the aria-level for the calendar title heading when on Web. Default is `1`.|
