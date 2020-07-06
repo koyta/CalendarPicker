@@ -1,4 +1,4 @@
-// Type definitions for react-native-calendar-picker yamoney-react-native-calendar-picker (fork from 6.1.4)
+// Type definitions for react-native-calendar-picker (yamoney fork from 6.1.4)
 
 import * as React from 'react';
 import { StyleProp, TextStyle, ViewStyle } from 'react-native';
